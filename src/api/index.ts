@@ -1,7 +1,6 @@
 import type {
   ApiResponse,
   Resource,
-  Category,
   ResourceListResponse,
   CategoryListResponse,
   SearchParams,
@@ -35,12 +34,6 @@ const createApiClient = (): AxiosInstance => {
   // 请求拦截器
   client.interceptors.request.use(
     (config) => {
-      // 添加认证token
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
       // 记录API请求日志
       console.log(
         `API Request: ${config.method?.toUpperCase()} ${config.url}`,
@@ -146,26 +139,6 @@ const mockApi = {
       },
     } as any;
   },
-
-  // 获取分类详情
-  getCategoryById: async (id: string): Promise<ApiResponse<Category>> => {
-    await mockDelay(200);
-
-    const category = mockCategories.find((c) => c.id === id);
-
-    if (!category) {
-      throw new Error("分类不存在");
-    }
-
-    return {
-      data: {
-        code: 200,
-        message: "获取分类详情成功",
-        data: category,
-        success: true,
-      },
-    } as any;
-  },
 };
 
 // 真实API
@@ -198,15 +171,6 @@ const realApi = {
     const response = await client.get(url);
     return response.data;
   },
-
-  // 获取分类详情
-  getCategoryById: async (id: string): Promise<ApiResponse<Category>> => {
-    const client = createApiClient();
-    const url = config.api.endpoints.categories.detail.replace(":id", id);
-
-    const response = await client.get(url);
-    return response.data;
-  },
 };
 
 // 资源相关API
@@ -228,13 +192,6 @@ export const resourceApi = {
     }
     return realApi.getResourceById(id);
   },
-
-  // 搜索资源
-  searchResources: async (
-    params: SearchParams
-  ): Promise<ApiResponse<ResourceListResponse>> => {
-    return resourceApi.getResources(params);
-  },
 };
 
 // 分类相关API
@@ -247,20 +204,15 @@ export const categoryApi = {
     return realApi.getCategories();
   },
 
-  // 获取分类详情
-  getCategoryById: async (id: string): Promise<ApiResponse<Category>> => {
-    if (config.useMockData) {
-      return mockApi.getCategoryById(id);
-    }
-    return realApi.getCategoryById(id);
-  },
-
   // 获取分类下的资源
   getResourcesByCategory: async (
     categoryId: string,
     params: SearchParams = {}
   ): Promise<ApiResponse<ResourceListResponse>> => {
-    return resourceApi.getResources({ ...params, categoryId });
+    if (config.useMockData) {
+      return mockApi.getResources({ ...params, categoryId });
+    }
+    return realApi.getResources({ ...params, categoryId });
   },
 };
 
