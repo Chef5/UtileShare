@@ -20,9 +20,13 @@
 
       <!-- 资源信息 -->
       <div
-        class="mt-4 flex items-center space-x-6 text-sm transition-colors text-gray-500 dark:text-gray-400"
+        class="mt-4 flex items-center space-x-3 text-sm transition-colors text-gray-500 dark:text-gray-400"
       >
-        <span class="flex items-center">
+        <RouterLink
+          :to="`/category/${resource.categoryId}`"
+          class="flex items-center px-2 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+          @click.stop
+        >
           <svg
             class="w-4 h-4 mr-1"
             fill="none"
@@ -37,7 +41,8 @@
             />
           </svg>
           {{ resource.categoryName }}
-        </span>
+        </RouterLink>
+        <span class="w-px h-4 bg-gray-300 dark:bg-gray-600"></span>
         <span class="flex items-center">
           <svg
             class="w-4 h-4 mr-1"
