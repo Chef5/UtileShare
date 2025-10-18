@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
+import config from "@/config.json";
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -8,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     name: "Home",
     component: () => import("@/pages/Home/HomePage.vue"),
     meta: {
-      title: "首页 - UtileShare",
+      title: `首页 - ${config.app.title}`,
       description: "实用资源分享网站首页",
     },
   },
@@ -17,7 +18,7 @@ const routes: RouteRecordRaw[] = [
     name: "Category",
     component: () => import("@/pages/Category/CategoryPage.vue"),
     meta: {
-      title: "分类 - UtileShare",
+      title: `分类 - ${config.app.title}`,
       description: "浏览分类资源",
     },
     props: true,
@@ -27,7 +28,7 @@ const routes: RouteRecordRaw[] = [
     name: "Resource",
     component: () => import("@/pages/Resource/ResourcePage.vue"),
     meta: {
-      title: "资源详情 - UtileShare",
+      title: `资源详情 - ${config.app.title}`,
       description: "查看资源详情",
     },
     props: true,
@@ -37,7 +38,7 @@ const routes: RouteRecordRaw[] = [
     name: "Search",
     component: () => import("@/pages/Search/SearchPage.vue"),
     meta: {
-      title: "搜索结果 - UtileShare",
+      title: `搜索结果 - ${config.app.title}`,
       description: "搜索结果页面",
     },
   },
@@ -46,7 +47,7 @@ const routes: RouteRecordRaw[] = [
     name: "NotFound",
     component: () => import("@/pages/NotFound/NotFoundPage.vue"),
     meta: {
-      title: "页面未找到 - UtileShare",
+      title: `页面未找到 - ${config.app.title}`,
       description: "您访问的页面不存在",
     },
   },

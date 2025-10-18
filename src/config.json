@@ -2,15 +2,20 @@
   "useMockData": true,
   "theme": true,
   "defaultTheme": "light",
+  "github": true,
+  "app": {
+    "title": "UtileShare",
+    "description": "UtileShare是一个专注于实用资源分享的网站，致力于为用户提供高质量的资源下载和分享服务"
+  },
   "api": {
     "endpoints": {
       "resources": {
         "list": "/api/resources",
         "detail": "/api/resources/:id"
       },
-    "categories": {
-      "list": "/api/categories"
-    }
+      "categories": {
+        "list": "/api/categories"
+      }
     }
   }
 }

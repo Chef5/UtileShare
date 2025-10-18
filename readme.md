@@ -14,6 +14,46 @@ UtileShare 的名称源自拉丁语 "Utile"，意为 "实用的、有用的" —
 - Tailwind CSS (样式) + VueUse (工具库)
 - Axios (HTTP客户端)
 
+## 项目配置
+
+### 环境变量配置
+
+请复制 `env.example` 文件为 `.env` 并根据需要修改：
+
+```bash
+# API基础配置
+VITE_API_BASE_URL=http://localhost:3000  # API服务器地址
+VITE_API_TIMEOUT=10000                   # API请求超时时间(毫秒)
+```
+
+### 应用配置
+
+项目配置文件位于 `src/config.json`，包含以下配置项：
+
+```json
+{
+  "useMockData": true,          // 是否使用模拟数据
+  "theme": true,                // 是否启用主题切换
+  "defaultTheme": "light",      // 默认主题 (light/dark)
+  "github": true,               // 是否显示GitHub链接
+  "app": {
+    "title": "UtileShare",      // 应用标题
+    "description": "UtileShare是一个专注于实用资源分享的网站，致力于为用户提供高质量的资源下载和分享服务"
+  },
+  "api": {
+    "endpoints": {
+      "resources": {
+        "list": "/api/resources",        // 资源列表接口
+        "detail": "/api/resources/:id"   // 资源详情接口
+      },
+      "categories": {
+        "list": "/api/categories"        // 分类列表接口
+      }
+    }
+  }
+}
+```
+
 ## 许可证
 
 本项目采用 [MIT 许可证](LICENSE) 开源。您可以自由使用、修改和分发本项目，但请保留版权声明。

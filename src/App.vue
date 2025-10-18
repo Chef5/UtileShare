@@ -25,19 +25,19 @@
 import { onMounted } from "vue";
 import { useHead } from "@vueuse/head";
 import AppLayout from "@/layouts/AppLayout.vue";
+import config from "@/config.json";
 
 // 设置全局head信息
 useHead({
-  title: "UtileShare - 实用资源分享网站",
+  title: `${config.app.title} - 实用资源分享网站`,
   meta: [
     {
       name: "description",
-      content:
-        "UtileShare是一个专注于实用资源分享的网站，提供高质量的资源下载和分享服务。",
+      content: config.app.description,
     },
     {
       name: "keywords",
-      content: "资源分享,实用工具,下载,UtileShare",
+      content: `资源分享,实用工具,下载,${config.app.title}`,
     },
     {
       name: "viewport",
@@ -55,7 +55,7 @@ useHead({
 
 // 应用初始化
 onMounted(() => {
-  console.log("UtileShare 应用已启动");
+  console.log(`${config.app.title} 应用已启动`);
 });
 </script>
 
