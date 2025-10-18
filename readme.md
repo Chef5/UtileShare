@@ -1,5 +1,7 @@
 # UtileShare
 
+![image](https://img.cdn.1zdz.cn/github/readme/UtileShare.png)
+
 > 本项目主要基于AI开发
 
 UtileShare 的名称源自拉丁语 "Utile"，意为 "实用的、有用的" —— 这是一个以 "实用" 为锚点的资源分享网站。
