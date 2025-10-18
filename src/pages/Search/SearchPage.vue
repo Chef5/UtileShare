@@ -2,55 +2,17 @@
   <div class="min-h-screen">
     <!-- 主要内容 -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- 搜索框 -->
+      <!-- 筛选组件 -->
       <div class="mb-8">
-        <div class="max-w-2xl">
-          <SearchBox />
-        </div>
+        <ResourceFilter @filter-change="handleFilterChange" />
       </div>
 
-      <!-- 筛选和排序 -->
-      <div class="mb-8">
-        <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        >
-          <div class="flex items-center space-x-4">
-            <span class="text-sm text-gray-600">
-              共找到 {{ total }} 个结果
-            </span>
-          </div>
-          <div class="flex items-center space-x-4">
-            <select
-              v-model="sortBy"
-              @change="handleSortChange"
-              class="input w-auto"
-            >
-              <option value="createdAt">按时间排序</option>
-              <option value="updatedAt">按更新时间</option>
-              <option value="views">按浏览量</option>
-              <option value="downloads">按下载量</option>
-              <option value="name">按名称排序</option>
-            </select>
-            <button
-              @click="toggleSortOrder"
-              class="btn-outline flex items-center space-x-1"
-            >
-              <span>{{ sortOrder === "asc" ? "升序" : "降序" }}</span>
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                />
-              </svg>
-            </button>
-          </div>
+      <!-- 结果统计 -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600 dark:text-gray-400">
+            共找到 {{ total }} 个结果
+          </span>
         </div>
       </div>
 
@@ -115,10 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { useResourceStore } from "@/stores";
-import SearchBox from "@/components/common/SearchBox.vue";
+import ResourceFilter from "@/components/common/ResourceFilter.vue";
 import ResourceList from "@/components/common/ResourceList.vue";
 
 const route = useRoute();
@@ -129,8 +91,6 @@ const resources = computed(() => resourceStore.resources);
 const loading = computed(() => resourceStore.loading);
 const hasMore = computed(() => resourceStore.hasMore);
 const total = computed(() => resourceStore.total);
-const sortBy = ref("createdAt");
-const sortOrder = ref<"asc" | "desc">("desc");
 
 // 计算属性
 const searchKeyword = computed(() => {
@@ -138,18 +98,9 @@ const searchKeyword = computed(() => {
 });
 
 // 方法
-const handleSortChange = () => {
+const handleFilterChange = (categoryId: string) => {
   resourceStore.updateSearchParams({
-    sortBy: sortBy.value,
-    page: 1,
-  });
-  loadResources();
-};
-
-const toggleSortOrder = () => {
-  sortOrder.value = sortOrder.value === "asc" ? "desc" : "asc";
-  resourceStore.updateSearchParams({
-    sortOrder: sortOrder.value,
+    categoryId,
     page: 1,
   });
   loadResources();
@@ -162,12 +113,10 @@ const loadResources = async () => {
     const response = await resourceApi.searchResources({
       ...resourceStore.searchParams,
       keyword: searchKeyword.value,
-      sortBy: sortBy.value,
-      sortOrder: sortOrder.value,
     });
 
-    if (response.data.success) {
-      const { items, total, pageSize } = response.data.data;
+    if ((response.data as any).success) {
+      const { items, total, pageSize } = (response.data as any).data;
 
       if (resourceStore.searchParams.page === 1) {
         resourceStore.setResources(items);

@@ -22,7 +22,7 @@
         v-model="searchKeyword"
         type="text"
         placeholder="搜索资源..."
-        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+        class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
         @keyup.enter="handleSearch"
         @input="handleInput"
       />
@@ -32,12 +32,12 @@
     <Transition name="fade">
       <div
         v-if="showSuggestions && suggestions.length > 0"
-        class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+        class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
       >
         <div
           v-for="(suggestion, index) in suggestions"
           :key="index"
-          class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"
+          class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
           @click="selectSuggestion(suggestion)"
         >
           <span class="font-normal block truncate">{{ suggestion }}</span>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
 

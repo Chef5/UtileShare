@@ -19,11 +19,6 @@
           </router-link>
         </div>
 
-        <!-- 搜索框 -->
-        <div class="flex-1 max-w-md mx-8 hidden sm:block">
-          <SearchBox />
-        </div>
-
         <!-- 右侧操作区 -->
         <div class="flex items-center space-x-4">
           <!-- 主题切换按钮 -->
@@ -63,53 +58,16 @@
               />
             </svg>
           </button>
-
-          <!-- 移动端菜单按钮 -->
-          <div class="md:hidden">
-            <button
-              @click="toggleMobileMenu"
-              class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              aria-label="打开菜单"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
         </div>
       </div>
     </div>
-
-    <!-- 移动端菜单 -->
-    <MobileMenu
-      v-if="showMobileMenu"
-      @close="showMobileMenu = false"
-    />
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import SearchBox from "@/components/common/SearchBox.vue";
-import MobileMenu from "@/components/layout/MobileMenu.vue";
 import { useThemeStore } from "@/stores/theme";
 
-const showMobileMenu = ref(false);
 const themeStore = useThemeStore();
-
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value;
-};
 
 const toggleTheme = () => {
   themeStore.toggleTheme();

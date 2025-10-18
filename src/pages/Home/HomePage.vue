@@ -2,9 +2,9 @@
   <div class="min-h-screen">
     <!-- 主要内容 -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- 分类筛选 -->
+      <!-- 筛选和搜索 -->
       <div class="mb-8">
-        <CategoryFilter @filter-change="handleCategoryFilter" />
+        <ResourceFilter @filter-change="handleCategoryFilter" />
       </div>
 
       <!-- 资源列表 -->
@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { onMounted, computed } from "vue";
 import { useResourceStore } from "@/stores";
-import CategoryFilter from "@/components/common/CategoryFilter.vue";
+import ResourceFilter from "@/components/common/ResourceFilter.vue";
 import ResourceList from "@/components/common/ResourceList.vue";
 
 const resourceStore = useResourceStore();
@@ -88,8 +88,8 @@ const loadResources = async () => {
     const { resourceApi } = await import("@/api");
     const response = await resourceApi.getResources(resourceStore.searchParams);
 
-    if (response.data.success) {
-      const { items, total, pageSize } = response.data.data;
+    if ((response.data as any).success) {
+      const { items, total, pageSize } = (response.data as any).data;
 
       if (resourceStore.searchParams.page === 1) {
         resourceStore.setResources(items);
