@@ -4,7 +4,7 @@
     <AppHeader />
 
     <!-- 主要内容区域 -->
-    <main class="flex-1">
+    <main class="flex-1 pt-16">
       <!-- 页面内容 -->
       <div class="w-full">
         <slot />

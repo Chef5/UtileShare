@@ -1,11 +1,33 @@
 <template>
   <header
-    class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
+    class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo 和标题 -->
         <div class="flex items-center">
+          <!-- 返回按钮 -->
+          <button
+            v-if="showBackButton"
+            @click="goBack"
+            class="mr-3 p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="返回"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
           <router-link
             to="/"
             class="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -65,13 +87,38 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/theme";
 
+const router = useRouter();
+const route = useRoute();
 const themeStore = useThemeStore();
 
 const toggleTheme = () => {
   themeStore.toggleTheme();
 };
 
-const { isDark } = themeStore;
+// 计算当前是否为暗色模式
+const isDark = computed(() => themeStore.currentTheme === "dark");
+
+// 判断是否显示返回按钮
+const showBackButton = computed(() => {
+  // 在首页时不显示返回按钮
+  if (route.path === "/") {
+    return false;
+  }
+  // 检查是否有历史记录可以返回
+  return window.history.length > 1;
+});
+
+// 返回上一页
+const goBack = () => {
+  if (window.history.length > 1) {
+    router.go(-1);
+  } else {
+    // 如果没有历史记录，返回首页
+    router.push("/");
+  }
+};
 </script>

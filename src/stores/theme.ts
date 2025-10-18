@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import config from "@/config.json";
 
 export const useThemeStore = defineStore("theme", () => {
@@ -7,10 +7,6 @@ export const useThemeStore = defineStore("theme", () => {
   const currentTheme = ref<"light" | "dark">(
     config.defaultTheme as "light" | "dark"
   );
-
-  // 计算属性
-  const isDark = computed(() => currentTheme.value === "dark");
-  const isLight = computed(() => currentTheme.value === "light");
 
   // 切换主题
   const toggleTheme = () => {
@@ -51,8 +47,6 @@ export const useThemeStore = defineStore("theme", () => {
 
   return {
     currentTheme,
-    isDark,
-    isLight,
     toggleTheme,
     setTheme,
     initTheme,
