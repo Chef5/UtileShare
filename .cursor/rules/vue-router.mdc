@@ -1,0 +1,117 @@
+---
+description: Vue Router 路由配置规范
+globs: ["**/router/**/*.ts", "**/router/**/*.js"]
+alwaysApply: false
+---
+
+# Vue Router 路由配置规范
+
+## 路由配置结构
+```typescript
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('@/pages/Home/HomePage.vue'),
+    meta: {
+      title: '首页',
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/resources',
+    name: 'Resources',
+    component: () => import('@/pages/Resources/ResourceListPage.vue'),
+    meta: {
+      title: '资源列表',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/resources/:id',
+    name: 'ResourceDetail',
+    component: () => import('@/pages/Resources/ResourceDetailPage.vue'),
+    meta: {
+      title: '资源详情',
+      requiresAuth: true
+    },
+    props: true
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  // 设置页面标题
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - UtileShare`
+  }
+  
+  // 检查认证
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      next('/login')
+      return
+    }
+  }
+  
+  next()
+})
+
+export default router
+```
+
+## 路由命名规范
+- 路由名称使用 PascalCase
+- 路径使用 kebab-case
+- 组件文件使用 PascalCase
+
+## 路由元信息
+```typescript
+interface RouteMeta {
+  title?: string
+  requiresAuth?: boolean
+  roles?: string[]
+  keepAlive?: boolean
+  icon?: string
+}
+```
+
+## 动态路由
+```typescript
+// 动态添加路由
+const addDynamicRoutes = (routes: RouteRecordRaw[]) => {
+  routes.forEach(route => {
+    router.addRoute(route)
+  })
+}
+
+// 路由参数类型
+interface ResourceDetailParams {
+  id: string
+}
+```
+
+## 路由最佳实践
+1. 使用懒加载减少初始包大小
+2. 实现路由守卫处理认证和权限
+3. 使用 TypeScript 定义路由类型
+4. 提供清晰的页面标题和元信息
+5. 实现滚动行为优化用户体验
+6. 使用 props 传递路由参数
+7. 实现路由缓存和页面状态保持

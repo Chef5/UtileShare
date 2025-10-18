@@ -1,0 +1,137 @@
+---
+description: TypeScript 类型定义规范
+globs: ["**/types/**/*.ts", "**/*.d.ts"]
+alwaysApply: false
+---
+
+# TypeScript 类型定义规范
+
+## 基础类型定义
+```typescript
+// 用户相关类型
+export interface User {
+  id: string
+  username: string
+  email: string
+  avatar?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 资源相关类型
+export interface Resource {
+  id: string
+  title: string
+  description: string
+  url: string
+  categoryId: string
+  tags: string[]
+  userId: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 分类相关类型
+export interface Category {
+  id: string
+  name: string
+  description?: string
+  icon?: string
+  color?: string
+  parentId?: string
+  children?: Category[]
+}
+
+// API 响应类型
+export interface ApiResponse<T> {
+  code: number
+  message: string
+  data: T
+  timestamp: string
+}
+
+// 分页相关类型
+export interface PaginationParams {
+  page: number
+  pageSize: number
+}
+
+export interface PaginatedResponse<T> {
+  items: T[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+```
+
+## 组件 Props 类型
+```typescript
+// 组件 Props 接口
+export interface ResourceListProps {
+  resources: Resource[]
+  loading: boolean
+  hasMore: boolean
+  onLoadMore: () => void
+  onFilterChange: (categoryId: string) => void
+}
+
+// 组件 Emits 类型
+export interface ResourceListEmits {
+  loadMore: []
+  filterChange: [categoryId: string]
+  itemClick: [resource: Resource]
+}
+```
+
+## 表单类型定义
+```typescript
+// 表单数据类型
+export interface CreateResourceForm {
+  title: string
+  description: string
+  url: string
+  categoryId: string
+  tags: string[]
+}
+
+export interface UpdateResourceForm extends Partial<CreateResourceForm> {
+  id: string
+}
+
+// 表单验证类型
+export interface FormValidation {
+  title: boolean
+  description: boolean
+  url: boolean
+  categoryId: boolean
+}
+```
+
+## 工具类型
+```typescript
+// 工具类型定义
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
+
+// 事件类型
+export type EventHandler<T = any> = (event: T) => void
+export type AsyncEventHandler<T = any> = (event: T) => Promise<void>
+
+// 状态类型
+export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
+export type SortOrder = 'asc' | 'desc'
+export type SortField = 'title' | 'createdAt' | 'updatedAt'
+```
+
+## 类型定义最佳实践
+1. 使用接口定义对象类型
+2. 使用类型别名定义联合类型
+3. 提供清晰的类型注释
+4. 使用泛型提高类型复用性
+5. 避免使用 `any` 类型
+6. 使用工具类型简化复杂类型
+7. 为 API 响应定义完整的类型
+8. 使用枚举定义常量类型
+9. 提供类型守卫函数
+10. 使用模块化组织类型定义

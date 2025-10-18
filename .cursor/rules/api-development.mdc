@@ -1,0 +1,116 @@
+---
+description: API 接口开发规范
+globs: ["**/api/**/*.ts", "**/api/**/*.js"]
+alwaysApply: false
+---
+
+# API 接口开发规范
+
+## API 客户端配置
+使用 Axios 进行 HTTP 请求，统一错误处理：
+
+```typescript
+import axios from 'axios'
+
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// 请求拦截器
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// 响应拦截器
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // 处理未授权
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+```
+
+## API 接口定义
+```typescript
+// 类型定义
+export interface ApiResponse<T> {
+  code: number
+  message: string
+  data: T
+}
+
+export interface ResourceListResponse {
+  resources: Resource[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface SearchParams {
+  keyword?: string
+  categoryId?: string
+  page?: number
+  pageSize?: number
+}
+
+// API 接口
+export const resourceApi = {
+  getResources: (params: SearchParams = {}): Promise<ApiResponse<ResourceListResponse>> => {
+    return apiClient.get('/resources', { params })
+  },
+  
+  getResource: (id: string): Promise<ApiResponse<Resource>> => {
+    return apiClient.get(`/resources/${id}`)
+  },
+  
+  createResource: (data: CreateResourceRequest): Promise<ApiResponse<Resource>> => {
+    return apiClient.post('/resources', data)
+  },
+  
+  updateResource: (id: string, data: UpdateResourceRequest): Promise<ApiResponse<Resource>> => {
+    return apiClient.put(`/resources/${id}`, data)
+  },
+  
+  deleteResource: (id: string): Promise<ApiResponse<void>> => {
+    return apiClient.delete(`/resources/${id}`)
+  }
+}
+```
+
+## API 开发最佳实践
+1. 统一错误处理机制
+2. 请求/响应拦截器处理认证和数据
+3. 使用 TypeScript 定义请求和响应类型
+4. 提供清晰的 API 文档
+5. 使用环境变量管理 API 地址
+6. 实现请求缓存和防抖
+7. 提供加载状态和错误状态管理
+
+## 错误处理
+```typescript
+export const handleApiError = (error: any): string => {
+  if (error.response?.data?.message) {
+    return error.response.data.message
+  }
+  if (error.message) {
+    return error.message
+  }
+  return '请求失败，请稍后重试'
+}
+```

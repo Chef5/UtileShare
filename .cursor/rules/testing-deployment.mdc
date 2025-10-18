@@ -1,0 +1,232 @@
+---
+description: 测试和部署规范
+globs: ["**/*.test.ts", "**/*.spec.ts", "**/tests/**/*"]
+alwaysApply: false
+---
+
+# 测试和部署规范
+
+## 单元测试
+
+### 1. Vue 组件测试
+```typescript
+import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
+import ResourceList from '@/components/ResourceList.vue'
+
+describe('ResourceList', () => {
+  it('renders resource list correctly', () => {
+    const resources = [
+      { id: '1', title: 'Test Resource', url: 'https://example.com' }
+    ]
+    
+    const wrapper = mount(ResourceList, {
+      props: {
+        resources,
+        loading: false
+      }
+    })
+    
+    expect(wrapper.find('.resource-item').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Test Resource')
+  })
+  
+  it('emits loadMore event when load more button is clicked', async () => {
+    const wrapper = mount(ResourceList, {
+      props: {
+        resources: [],
+        loading: false,
+        hasMore: true
+      }
+    })
+    
+    await wrapper.find('.load-more-btn').trigger('click')
+    expect(wrapper.emitted('loadMore')).toBeTruthy()
+  })
+})
+```
+
+### 2. Store 测试
+```typescript
+import { setActivePinia, createPinia } from 'pinia'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { useResourceStore } from '@/stores/resource'
+
+describe('Resource Store', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+  
+  it('should fetch resources successfully', async () => {
+    const store = useResourceStore()
+    
+    // Mock API 调用
+    vi.spyOn(resourceApi, 'getResources').mockResolvedValue({
+      code: 200,
+      data: { resources: [], total: 0 }
+    })
+    
+    await store.fetchResources()
+    
+    expect(store.loading).toBe(false)
+    expect(store.error).toBeNull()
+  })
+})
+```
+
+### 3. API 测试
+```typescript
+import { describe, it, expect, vi } from 'vitest'
+import { resourceApi } from '@/api/resource'
+
+describe('Resource API', () => {
+  it('should get resources with correct parameters', async () => {
+    const mockResponse = {
+      code: 200,
+      data: { resources: [], total: 0 }
+    }
+    
+    vi.spyOn(apiClient, 'get').mockResolvedValue(mockResponse)
+    
+    const result = await resourceApi.getResources({ page: 1, pageSize: 10 })
+    
+    expect(result).toEqual(mockResponse)
+    expect(apiClient.get).toHaveBeenCalledWith('/resources', {
+      params: { page: 1, pageSize: 10 }
+    })
+  })
+})
+```
+
+## 集成测试
+
+### 1. 页面测试
+```typescript
+import { mount } from '@vue/test-utils'
+import { createRouter, createWebHistory } from 'vue-router'
+import { createPinia } from 'pinia'
+import HomePage from '@/pages/Home/HomePage.vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [{ path: '/', component: HomePage }]
+})
+
+const pinia = createPinia()
+
+describe('HomePage Integration', () => {
+  it('should render home page with navigation', async () => {
+    const wrapper = mount(HomePage, {
+      global: {
+        plugins: [router, pinia]
+      }
+    })
+    
+    await router.push('/')
+    await wrapper.vm.$nextTick()
+    
+    expect(wrapper.find('.home-page').exists()).toBe(true)
+    expect(wrapper.find('.navigation').exists()).toBe(true)
+  })
+})
+```
+
+## E2E 测试
+
+### 1. Playwright 测试
+```typescript
+import { test, expect } from '@playwright/test'
+
+test.describe('Resource Management', () => {
+  test('should create a new resource', async ({ page }) => {
+    await page.goto('/resources')
+    
+    await page.click('.create-resource-btn')
+    await page.fill('[data-testid="resource-title"]', 'Test Resource')
+    await page.fill('[data-testid="resource-url"]', 'https://example.com')
+    await page.selectOption('[data-testid="resource-category"]', 'web')
+    
+    await page.click('.submit-btn')
+    
+    await expect(page.locator('.success-message')).toBeVisible()
+    await expect(page.locator('.resource-item')).toContainText('Test Resource')
+  })
+  
+  test('should search resources', async ({ page }) => {
+    await page.goto('/resources')
+    
+    await page.fill('.search-input', 'vue')
+    await page.press('.search-input', 'Enter')
+    
+    await expect(page.locator('.resource-item')).toContainText('vue')
+  })
+})
+```
+
+## 部署配置
+
+### 1. 环境配置
+```typescript
+// .env.production
+VITE_API_BASE_URL=https://api.utileshare.com
+VITE_APP_TITLE=UtileShare
+VITE_APP_VERSION=1.0.0
+
+// .env.development
+VITE_API_BASE_URL=http://localhost:3000
+VITE_APP_TITLE=UtileShare Dev
+VITE_APP_VERSION=1.0.0-dev
+```
+
+### 2. 构建配置
+```typescript
+// vite.config.ts
+export default defineConfig({
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router', 'pinia'],
+          ui: ['@headlessui/vue', '@heroicons/vue']
+        }
+      }
+    }
+  }
+})
+```
+
+### 3. Docker 配置
+```dockerfile
+# Dockerfile
+FROM node:18-alpine as build
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## 测试最佳实践
+
+1. **测试覆盖率**: 目标达到 80% 以上的代码覆盖率
+2. **测试命名**: 使用描述性的测试名称
+3. **测试隔离**: 每个测试应该独立运行
+4. **Mock 使用**: 合理使用 Mock 避免外部依赖
+5. **测试数据**: 使用固定的测试数据确保测试稳定性
+6. **错误测试**: 测试错误情况和边界条件
+7. **性能测试**: 对关键功能进行性能测试
+8. **持续集成**: 在 CI/CD 中运行测试
+9. **测试报告**: 生成详细的测试报告
+10. **测试维护**: 定期维护和更新测试用例

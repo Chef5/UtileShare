@@ -1,0 +1,142 @@
+# UtileShare 项目 Cursor Rules
+
+## 项目技术栈
+- Vue 3 + TypeScript + Vite
+- Pinia (状态管理) + Vue Router 4 (路由)
+- Tailwind CSS (样式) + VueUse (工具库)
+- Axios (HTTP客户端)
+
+## 代码规范
+
+### Vue 组件开发
+- 使用 Composition API + `<script setup>` 语法
+- 组件名使用 PascalCase (如 `ResourceList.vue`)
+- Props 和 Emits 必须定义 TypeScript 类型
+- 导入顺序：Vue相关 → 第三方库 → 本地模块
+
+```vue
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useResourceStore } from '@/stores'
+import type { Resource } from '@/types'
+
+interface Props {
+  resources: Resource[]
+  loading: boolean
+}
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  loadMore: []
+  filterChange: [categoryId: string]
+}>()
+</script>
+```
+
+### TypeScript 规范
+- 所有变量和函数必须定义类型
+- 使用接口定义复杂对象类型
+- API 响应必须定义类型
+- 避免使用 `any` 类型
+
+### 样式规范
+- 使用 Tailwind CSS 类名，避免内联样式
+- 使用 scoped 样式
+- 遵循移动优先设计原则
+
+### 文件命名规范
+- 组件文件: PascalCase (`ResourceList.vue`)
+- 页面文件: PascalCase (`HomePage.vue`)
+- 工具文件: camelCase (`formatDate.ts`)
+- 类型文件: camelCase (`index.ts`)
+
+## 项目结构
+
+```
+src/
+├── api/                    # API 接口封装
+├── components/             # 公共组件
+│   ├── common/            # 通用组件
+│   └── layout/            # 布局组件
+├── pages/                 # 页面组件
+├── stores/                # Pinia 状态管理
+├── types/                 # TypeScript 类型定义
+├── router/                # 路由配置
+├── utils/                 # 工具函数
+└── assets/                # 静态资源
+```
+
+## 状态管理规范
+
+使用 Pinia Composition API 风格：
+
+```typescript
+export const useResourceStore = defineStore('resource', () => {
+  const resources = ref<Resource[]>([])
+  const loading = ref(false)
+  
+  const hasMore = computed(() => resources.value.length > 0)
+  
+  const setResources = (newResources: Resource[]) => {
+    resources.value = newResources
+  }
+  
+  return { resources, loading, hasMore, setResources }
+})
+```
+
+## API 开发规范
+
+- 使用 Axios 进行 HTTP 请求
+- 统一错误处理
+- 请求/响应拦截器处理认证和数据
+
+```typescript
+export const resourceApi = {
+  getResources: (params: SearchParams = {}): Promise<ApiResponse<ResourceListResponse>> => {
+    return apiClient.get('/resources', { params })
+  }
+}
+```
+
+## 性能优化
+
+- 路由级别的代码分割
+- 组件懒加载
+- API 请求缓存
+- 避免不必要的重新渲染
+
+## 错误处理
+
+- 统一错误处理机制
+- 用户友好的错误提示
+- 加载状态和空状态处理
+
+## 提交规范
+
+使用 Conventional Commits 格式：
+- `feat`: 新功能
+- `fix`: 修复问题
+- `docs`: 文档更新
+- `style`: 代码格式调整
+- `refactor`: 代码重构
+- `test`: 测试相关
+- `chore`: 构建过程或辅助工具的变动
+
+## 开发命令
+
+```bash
+npm run dev          # 启动开发服务器
+npm run build        # 构建生产版本
+npm run preview      # 预览生产构建
+npm run type-check   # 类型检查
+```
+
+## 注意事项
+
+1. 所有组件必须使用 TypeScript
+2. 遵循 Vue 3 最佳实践
+3. 保持代码简洁和可维护性
+4. 注重用户体验和性能优化
+5. 及时更新文档和注释

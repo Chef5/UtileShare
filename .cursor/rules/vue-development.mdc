@@ -1,0 +1,89 @@
+---
+description: Vue 3 + TypeScript 项目开发规范
+globs: ["**/*.vue", "**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# UtileShare 项目开发规范
+
+## 技术栈
+- Vue 3 + TypeScript + Vite
+- Pinia (状态管理) + Vue Router 4 (路由)
+- Tailwind CSS (样式) + VueUse (工具库)
+- Axios (HTTP客户端)
+
+## Vue 组件开发规范
+
+### 组件结构
+- 使用 Composition API + `<script setup>` 语法
+- 组件名使用 PascalCase (如 `ResourceList.vue`)
+- Props 和 Emits 必须定义 TypeScript 类型
+- 导入顺序：Vue相关 → 第三方库 → 本地模块
+
+### 代码示例
+```vue
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useResourceStore } from '@/stores'
+import type { Resource } from '@/types'
+
+interface Props {
+  resources: Resource[]
+  loading: boolean
+}
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  loadMore: []
+  filterChange: [categoryId: string]
+}>()
+</script>
+```
+
+## TypeScript 规范
+- 所有变量和函数必须定义类型
+- 使用接口定义复杂对象类型
+- API 响应必须定义类型
+- 避免使用 `any` 类型
+
+## 样式规范
+- 使用 Tailwind CSS 类名，避免内联样式
+- 使用 scoped 样式
+- 遵循移动优先设计原则
+
+## 文件命名规范
+- 组件文件: PascalCase (`ResourceList.vue`)
+- 页面文件: PascalCase (`HomePage.vue`)
+- 工具文件: camelCase (`formatDate.ts`)
+- 类型文件: camelCase (`index.ts`)
+
+## 项目结构
+```
+src/
+├── api/                    # API 接口封装
+├── components/             # 公共组件
+│   ├── common/            # 通用组件
+│   └── layout/            # 布局组件
+├── pages/                 # 页面组件
+├── stores/                # Pinia 状态管理
+├── types/                 # TypeScript 类型定义
+├── router/                # 路由配置
+├── utils/                 # 工具函数
+└── assets/                # 静态资源
+```
+
+## 开发命令
+```bash
+npm run dev          # 启动开发服务器
+npm run build        # 构建生产版本
+npm run preview      # 预览生产构建
+npm run type-check   # 类型检查
+```
+
+## 注意事项
+1. 所有组件必须使用 TypeScript
+2. 遵循 Vue 3 最佳实践
+3. 保持代码简洁和可维护性
+4. 注重用户体验和性能优化
+5. 及时更新文档和注释

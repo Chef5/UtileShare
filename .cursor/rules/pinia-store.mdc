@@ -1,0 +1,87 @@
+---
+description: Pinia 状态管理规范
+globs: ["**/stores/**/*.ts", "**/stores/**/*.js"]
+alwaysApply: false
+---
+
+# Pinia 状态管理规范
+
+## Store 结构
+使用 Pinia Composition API 风格：
+
+```typescript
+export const useResourceStore = defineStore('resource', () => {
+  // 状态
+  const resources = ref<Resource[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  
+  // 计算属性
+  const hasMore = computed(() => resources.value.length > 0)
+  const isEmpty = computed(() => resources.value.length === 0)
+  
+  // 动作
+  const setResources = (newResources: Resource[]) => {
+    resources.value = newResources
+  }
+  
+  const setLoading = (isLoading: boolean) => {
+    loading.value = isLoading
+  }
+  
+  const setError = (errorMessage: string | null) => {
+    error.value = errorMessage
+  }
+  
+  const clearError = () => {
+    error.value = null
+  }
+  
+  // 异步动作
+  const fetchResources = async (params: SearchParams = {}) => {
+    try {
+      setLoading(true)
+      clearError()
+      const response = await resourceApi.getResources(params)
+      setResources(response.data.resources)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '未知错误')
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  return { 
+    resources, 
+    loading, 
+    error, 
+    hasMore, 
+    isEmpty,
+    setResources,
+    setLoading,
+    setError,
+    clearError,
+    fetchResources
+  }
+})
+```
+
+## Store 命名规范
+- Store 名称使用 camelCase
+- 文件名使用 kebab-case
+- 导出名称使用 `use` + PascalCase
+
+## 状态管理最佳实践
+1. 将状态、计算属性和动作分离
+2. 使用 TypeScript 类型定义
+3. 提供清晰的错误处理
+4. 使用计算属性而不是直接访问状态
+5. 异步操作要有加载状态和错误处理
+
+## Store 组合
+```typescript
+// 在组件中使用
+const resourceStore = useResourceStore()
+const { resources, loading, error } = storeToRefs(resourceStore)
+const { fetchResources, clearError } = resourceStore
+```

@@ -1,0 +1,34 @@
+{
+  "useMockData": true,
+  "theme": true,
+  "defaultTheme": "light",
+  "api": {
+    "endpoints": {
+      "resources": {
+        "list": "/api/resources",
+        "detail": "/api/resources/:id",
+        "search": "/api/resources/search",
+        "create": "/api/resources",
+        "update": "/api/resources/:id",
+        "delete": "/api/resources/:id"
+      },
+      "categories": {
+        "list": "/api/categories",
+        "detail": "/api/categories/:id",
+        "create": "/api/categories",
+        "update": "/api/categories/:id",
+        "delete": "/api/categories/:id"
+      },
+      "users": {
+        "profile": "/api/users/profile",
+        "login": "/api/users/login",
+        "register": "/api/users/register",
+        "logout": "/api/users/logout"
+      },
+      "upload": {
+        "image": "/api/upload/image",
+        "file": "/api/upload/file"
+      }
+    }
+  }
+}
