@@ -20,7 +20,7 @@
             :key="category.id"
             :value="category.id"
           >
-            {{ category.name }} ({{ category.resourceCount }})
+            {{ category.name }}
           </option>
         </select>
       </div>
@@ -51,7 +51,7 @@
             :key="category.id"
             :value="category.id"
           >
-            {{ category.name }} ({{ category.resourceCount }})
+            {{ category.name }}
           </option>
         </select>
       </div>

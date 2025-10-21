@@ -108,8 +108,8 @@ export const useCategoryStore = defineStore("category", () => {
       const { categoryApi } = await import("@/api");
       const response = await categoryApi.getCategories();
 
-      if (response.data.success) {
-        setCategories(response.data.data);
+      if (response.success) {
+        setCategories(response.data);
       }
     } catch (error) {
       console.error("加载分类失败:", error);
