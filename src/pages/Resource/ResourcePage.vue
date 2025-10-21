@@ -28,7 +28,9 @@
           <div class="lg:col-span-2">
             <div class="card">
               <div class="card-header">
-                <h2 class="text-lg font-semibold text-gray-900">资源描述</h2>
+                <h2 class="text-lg font-semibold text-gray-900">
+                  {{ resource.name }}
+                </h2>
               </div>
               <div class="card-body">
                 <div
