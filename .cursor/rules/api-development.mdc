@@ -6,49 +6,251 @@ alwaysApply: false
 
 # API 接口开发规范
 
-## API 客户端配置
-使用 Axios 进行 HTTP 请求，统一错误处理：
+## 项目架构
 
+### 文件结构
+```
+src/api/
+├── http.ts        # HTTP 客户端配置（拦截器、安全加密）
+├── api.ts         # 真实 API 接口调用
+├── mockApi.ts     # 模拟数据 API
+└── index.ts       # 业务逻辑层（自动切换 Mock/Real）
+```
+
+### 架构设计原则
+1. **单例模式** - API 客户端只创建一次，提升性能
+2. **职责分离** - HTTP 配置、真实 API、模拟 API 分离
+3. **安全加密** - 支持 AES-128-CBC 加密 + SHA-256 签名
+4. **配置驱动** - 通过 `config.json` 控制行为
+
+## HTTP 客户端配置 (http.ts)
+
+### 基础配置
 ```typescript
-import axios from 'axios'
+import axios, { type AxiosInstance } from 'axios'
+import { buildEncryptedPayload } from '@/utils/crypto'
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+// 从环境变量获取配置
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+const API_TIMEOUT = Number(import.meta.env.VITE_API_TIMEOUT) || 10000
 
-// 请求拦截器
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+export const createApiClient = (): AxiosInstance => {
+  const client = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: API_TIMEOUT,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  
+  // 配置拦截器...
+  return client
+}
+```
+
+### 请求拦截器
+```typescript
+client.interceptors.request.use(
+  async (config) => {
+    // 1. 记录请求日志
+    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`)
+    
+    // 2. 处理安全加密（如果启用）
+    const appSecurity = (await import('@/config.json')).default.security
+    if (appSecurity?.enable) {
+      // 添加自定义请求头
+      if (appSecurity.transport?.headerKey) {
+        config.headers[appSecurity.transport.headerKey] = 
+          appSecurity.transport.headerValue
+      }
+      
+      // 加密请求参数/数据
+      const method = config.method?.toLowerCase()
+      if (method === 'get') {
+        const encrypted = await buildEncryptedPayload(config.params || {})
+        config.params = { [payloadField]: encrypted.payload }
+      } else {
+        const encrypted = await buildEncryptedPayload(config.data || {})
+        config.data = { [payloadField]: encrypted.payload }
+      }
     }
+    
     return config
   },
   (error) => Promise.reject(error)
 )
+```
 
-// 响应拦截器
-apiClient.interceptors.response.use(
-  (response) => response,
+### 响应拦截器
+```typescript
+client.interceptors.response.use(
+  (response) => {
+    console.log(`API Response: ${response.config.url}`, response.data)
+    return response
+  },
   (error) => {
-    if (error.response?.status === 401) {
-      // 处理未授权
-      localStorage.removeItem('token')
-      window.location.href = '/login'
-    }
+    console.error('Response error:', error)
     return Promise.reject(error)
   }
 )
 ```
 
-## API 接口定义
+## 真实 API 实现 (api.ts)
+
+### 单例模式
 ```typescript
-// 类型定义
+import { createApiClient } from './http'
+import config from '@/config.json'
+import type { ApiResponse, ResourceListResponse, SearchParams } from '@/types'
+
+// 创建单例客户端
+const apiClient = createApiClient()
+
+export const realApi = {
+  getResources: async (
+    params: SearchParams = {}
+  ): Promise<ApiResponse<ResourceListResponse>> => {
+    const url = config.api.endpoints.resources.list
+    const response = await apiClient.get(url, { params })
+    return response.data
+  },
+  
+  getResourceById: async (id: string): Promise<ApiResponse<Resource>> => {
+    const url = config.api.endpoints.resources.detail.replace(':id', id)
+    const response = await apiClient.get(url)
+    return response.data
+  },
+  
+  getCategories: async (): Promise<ApiResponse<CategoryListResponse>> => {
+    const url = config.api.endpoints.categories.list
+    const response = await apiClient.get(url)
+    return response.data
+  },
+}
+```
+
+## 模拟 API 实现 (mockApi.ts)
+
+```typescript
+import type { ApiResponse, ResourceListResponse, SearchParams } from '@/types'
+
+export const mockApi = {
+  getResources: async (
+    params: SearchParams = {}
+  ): Promise<ApiResponse<ResourceListResponse>> => {
+    // 模拟网络延迟
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    
+    // 返回模拟数据
+    return {
+      code: 200,
+      message: 'success',
+      data: {
+        resources: mockResources.filter(/* 根据 params 过滤 */),
+        total: mockResources.length,
+        page: params.page || 1,
+        pageSize: params.pageSize || 10,
+      },
+    }
+  },
+  
+  // 其他模拟接口...
+}
+```
+
+## 业务逻辑层 (index.ts)
+
+### 自动切换数据源
+```typescript
+import config from '@/config.json'
+import { mockApi } from './mockApi'
+import { realApi } from './api'
+import type { ApiResponse, ResourceListResponse, SearchParams } from '@/types'
+
+export const resourceApi = {
+  getResources: async (
+    params: SearchParams = {}
+  ): Promise<ApiResponse<ResourceListResponse>> => {
+    // 根据配置自动切换
+    if (config.useMockData) {
+      return mockApi.getResources(params)
+    }
+    return realApi.getResources(params)
+  },
+}
+
+export const categoryApi = {
+  // 类似实现...
+}
+
+// 导出配置供外部使用
+export { default as appConfig } from '@/config.json'
+```
+
+## 安全加密 (crypto.ts)
+
+### 加密流程
+1. 添加时间戳防重放攻击
+2. 使用 SHA-256 计算签名
+3. 使用 AES-128-CBC 加密整个请求参数
+
+```typescript
+export async function buildEncryptedPayload(
+  originalParams: PlainParams
+): Promise<EncryptResult> {
+  const params = { ...originalParams }
+  params.t = Date.now()                      // 时间戳
+  params.hash = await signParams(params)      // SHA-256 签名
+  
+  const json = JSON.stringify(params)
+  const payload = await aes128CbcEncrypt(json) // AES 加密
+  return { payload }
+}
+```
+
+## 配置文件说明
+
+### config.json
+```json
+{
+  "useMockData": true,  // 是否使用模拟数据
+  "api": {
+    "endpoints": {
+      "resources": {
+        "list": "/api/resources",
+        "detail": "/api/resources/:id"
+      }
+    }
+  },
+  "security": {
+    "enable": true,  // 是否启用安全加密
+    "sign": {
+      "algo": "SHA-256",
+      "secret": "CHANGE_ME_SIGN_SECRET"
+    },
+    "encrypt": {
+      "algo": "AES-128-CBC",
+      "keyBase64": "MDEyMzQ1Njc4OWFiY2RlZg==",
+      "ivBase64": "YWJjZGVmMDEyMzQ1Njc4OQ=="
+    },
+    "transport": {
+      "payloadField": "payload",
+      "headerKey": "X-Utile-Payload",
+      "headerValue": "encrypted"
+    }
+  }
+}
+```
+
+### .env
+```bash
+VITE_API_BASE_URL=http://localhost:3000
+VITE_API_TIMEOUT=10000
+```
+
+## 类型定义
+
+```typescript
 export interface ApiResponse<T> {
   code: number
   message: string
@@ -68,49 +270,58 @@ export interface SearchParams {
   page?: number
   pageSize?: number
 }
-
-// API 接口
-export const resourceApi = {
-  getResources: (params: SearchParams = {}): Promise<ApiResponse<ResourceListResponse>> => {
-    return apiClient.get('/resources', { params })
-  },
-  
-  getResource: (id: string): Promise<ApiResponse<Resource>> => {
-    return apiClient.get(`/resources/${id}`)
-  },
-  
-  createResource: (data: CreateResourceRequest): Promise<ApiResponse<Resource>> => {
-    return apiClient.post('/resources', data)
-  },
-  
-  updateResource: (id: string, data: UpdateResourceRequest): Promise<ApiResponse<Resource>> => {
-    return apiClient.put(`/resources/${id}`, data)
-  },
-  
-  deleteResource: (id: string): Promise<ApiResponse<void>> => {
-    return apiClient.delete(`/resources/${id}`)
-  }
-}
 ```
 
-## API 开发最佳实践
-1. 统一错误处理机制
-2. 请求/响应拦截器处理认证和数据
-3. 使用 TypeScript 定义请求和响应类型
-4. 提供清晰的 API 文档
-5. 使用环境变量管理 API 地址
-6. 实现请求缓存和防抖
-7. 提供加载状态和错误状态管理
+## 使用示例
 
-## 错误处理
 ```typescript
-export const handleApiError = (error: any): string => {
-  if (error.response?.data?.message) {
-    return error.response.data.message
+import { resourceApi, categoryApi } from '@/api'
+
+// 获取资源列表
+const fetchResources = async () => {
+  try {
+    const response = await resourceApi.getResources({ 
+      keyword: '搜索关键词',
+      page: 1,
+      pageSize: 10 
+    })
+    
+    if (response.code === 200) {
+      console.log(response.data.resources)
+    }
+  } catch (error) {
+    console.error('获取资源失败:', error)
   }
-  if (error.message) {
-    return error.message
-  }
-  return '请求失败，请稍后重试'
+}
+
+// 获取资源详情
+const fetchResourceDetail = async (id: string) => {
+  const response = await resourceApi.getResourceById(id)
+  return response.data
+}
+
+// 获取分类列表
+const fetchCategories = async () => {
+  const response = await categoryApi.getCategories()
+  return response.data.categories
 }
 ```
+
+## 开发最佳实践
+
+1. **单例模式** - API 客户端只创建一次，避免重复实例化
+2. **职责分离** - HTTP 配置、真实 API、模拟 API 各自独立
+3. **类型安全** - 所有接口都使用 TypeScript 定义类型
+4. **安全加密** - 生产环境启用加密，开发环境可关闭
+5. **配置驱动** - 通过配置文件控制行为，无需修改代码
+6. **错误处理** - 统一的错误处理机制
+7. **日志记录** - 开发环境记录请求和响应日志
+8. **环境隔离** - 使用环境变量管理不同环境配置
+
+## 注意事项
+
+1. 生产环境必须修改 `security.sign.secret`
+2. 生产环境必须修改 `security.encrypt.keyBase64` 和 `ivBase64`
+3. Mock 数据仅用于开发测试，生产环境设置 `useMockData: false`
+4. API 客户端使用单例模式，不要在每个方法内创建新实例
+5. 加密密钥不要提交到代码仓库，使用环境变量管理

@@ -99,8 +99,8 @@ const loadResources = async () => {
       ...resourceStore.searchParams,
     });
 
-    if ((response.data as any).success) {
-      const { items, total, pageSize } = (response.data as any).data;
+    if (response.success) {
+      const { items, total, pageSize } = response.data;
 
       if (resourceStore.searchParams.page === 1) {
         resourceStore.setResources(items);

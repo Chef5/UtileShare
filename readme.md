@@ -14,9 +14,10 @@ UtileShare 的名称源自拉丁语 "Utile"，意为 "实用的、有用的" —
 - Vue 3 + TypeScript + Vite
 - Pinia (状态管理) + Vue Router 4 (路由)
 - Tailwind CSS (样式) + VueUse (工具库)
-- Axios (HTTP客户端)
+- Axios (HTTP 客户端)
+- Web Crypto API (安全加密)
 
-## 项目配置
+## 项目配置 
 
 ### 环境变量配置
 
@@ -38,10 +39,12 @@ VITE_API_TIMEOUT=10000                   # API请求超时时间(毫秒)
   "theme": true,                // 是否启用主题切换
   "defaultTheme": "light",      // 默认主题 (light/dark)
   "github": true,               // 是否显示GitHub链接
+  
   "app": {
     "title": "UtileShare",      // 应用标题
     "description": "UtileShare是一个专注于实用资源分享的网站，致力于为用户提供高质量的资源下载和分享服务"
   },
+  
   "api": {
     "endpoints": {
       "resources": {
@@ -51,6 +54,24 @@ VITE_API_TIMEOUT=10000                   # API请求超时时间(毫秒)
       "categories": {
         "list": "/api/categories"        // 分类列表接口
       }
+    }
+  },
+  
+  "security": {
+    "enable": true,               // 是否启用安全加密
+    "sign": {
+      "algo": "SHA-256",
+      "secret": "CHANGE_ME_SIGN_SECRET"  // ⚠️ 生产环境必须修改
+    },
+    "encrypt": {
+      "algo": "AES-128-CBC",
+      "keyBase64": "MDEyMzQ1Njc4OWFiY2RlZg==",  // ⚠️ 生产环境必须修改
+      "ivBase64": "YWJjZGVmMDEyMzQ1Njc4OQ=="    // ⚠️ 生产环境必须修改
+    },
+    "transport": {
+      "payloadField": "payload",          // 加密数据字段名
+      "headerKey": "X-Utile-Payload",    // 自定义请求头
+      "headerValue": "encrypted"         // 请求头值
     }
   }
 }

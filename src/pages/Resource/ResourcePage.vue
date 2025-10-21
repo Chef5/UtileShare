@@ -137,6 +137,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { useResourceStore } from "@/stores";
+import type { Resource } from "@/types";
 
 // Props
 interface Props {
@@ -149,7 +150,7 @@ const resourceStore = useResourceStore();
 
 // 响应式数据
 const loading = ref(false);
-const resource = ref(null);
+const resource = ref<Resource | null>(null);
 
 // 方法
 const loadResource = async () => {
@@ -158,15 +159,15 @@ const loadResource = async () => {
     const { resourceApi } = await import("@/api");
     const response = await resourceApi.getResourceById(props.id);
 
-    if (response.data.success) {
-      resource.value = response.data.data;
-      resourceStore.setCurrentResource(response.data.data);
+    if (response.success) {
+      resource.value = response.data;
+      resourceStore.setCurrentResource(response.data);
     } else {
-      resource.value = null;
+      resource.value = null as any;
     }
   } catch (error) {
     console.error("加载资源详情失败:", error);
-    resource.value = null;
+    resource.value = null as any;
   } finally {
     loading.value = false;
   }

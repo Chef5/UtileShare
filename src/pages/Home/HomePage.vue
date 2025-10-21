@@ -88,8 +88,9 @@ const loadResources = async () => {
     const { resourceApi } = await import("@/api");
     const response = await resourceApi.getResources(resourceStore.searchParams);
 
-    if ((response.data as any).success) {
-      const { items, total, pageSize } = (response.data as any).data;
+    console.log(response);
+    if (response.success) {
+      const { items, total, pageSize } = response.data;
 
       if (resourceStore.searchParams.page === 1) {
         resourceStore.setResources(items);

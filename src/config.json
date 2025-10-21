@@ -17,5 +17,22 @@
         "list": "/api/categories"
       }
     }
+  },
+  "security": {
+    "enable": true,
+    "sign": {
+      "algo": "SHA-256",
+      "secret": "CHANGE_ME_SIGN_SECRET"
+    },
+    "encrypt": {
+      "algo": "AES-128-CBC",
+      "keyBase64": "MDEyMzQ1Njc4OWFiY2RlZg==",
+      "ivBase64": "YWJjZGVmMDEyMzQ1Njc4OQ=="
+    },
+    "transport": {
+      "payloadField": "payload",
+      "headerKey": "X-Utile-Payload",
+      "headerValue": "encrypted"
+    }
   }
 }
