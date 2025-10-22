@@ -28,6 +28,17 @@ export const resourceApi = {
     }
     return realApi.getResourceById(id);
   },
+
+  // 获取下载链接
+  getDownloadUrl: async (
+    code: string,
+    type: string
+  ): Promise<ApiResponse<{ url: string }>> => {
+    if (config.useMockData) {
+      return mockApi.getDownloadUrl(code, type);
+    }
+    return realApi.getDownloadUrl(code, type);
+  },
 };
 
 // 分类相关API

@@ -82,14 +82,12 @@
                         {{ link.size }}
                       </p>
                     </div>
-                    <a
-                      :href="link.url"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      @click="handleGetDownloadLink(link)"
                       class="ml-3 btn-primary text-xs"
                     >
                       下载
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -132,14 +130,23 @@
         </RouterLink>
       </div>
     </div>
+
+    <!-- 下载弹窗 -->
+    <DownloadModal
+      :show="showDownloadModal"
+      :download-link="selectedDownloadLink"
+      @close="handleCloseModal"
+      @download="handleDownload"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRoute, RouterLink } from "vue-router";
+import { onMounted, ref } from "vue";
+import { RouterLink } from "vue-router";
 import { useResourceStore } from "@/stores";
-import type { Resource } from "@/types";
+import type { Resource, DownloadLink } from "@/types";
+import DownloadModal from "@/components/common/DownloadModal.vue";
 
 // Props
 interface Props {
@@ -147,14 +154,12 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const route = useRoute();
 const resourceStore = useResourceStore();
 
 // 响应式数据
 const loading = ref(false);
 const resource = ref<Resource | null>(null);
 
-// 方法
 const loadResource = async () => {
   try {
     loading.value = true;
@@ -172,6 +177,41 @@ const loadResource = async () => {
     resource.value = null as any;
   } finally {
     loading.value = false;
+  }
+};
+
+// 下载弹窗
+const showDownloadModal = ref(false);
+const selectedDownloadLink = ref<DownloadLink | null>(null);
+
+const handleGetDownloadLink = (link: DownloadLink) => {
+  selectedDownloadLink.value = link;
+  showDownloadModal.value = true;
+};
+
+const handleCloseModal = () => {
+  showDownloadModal.value = false;
+  selectedDownloadLink.value = null;
+};
+
+const handleDownload = async (code: string, type: string) => {
+  try {
+    const { resourceApi } = await import("@/api");
+    const response = await resourceApi.getDownloadUrl(code, type);
+
+    if (response.success && response.data.url) {
+      // 在新窗口打开下载链接
+      window.open(response.data.url, "_blank", "noopener,noreferrer");
+      // 延迟关闭弹窗，让用户看到操作已完成
+      setTimeout(() => {
+        handleCloseModal();
+      }, 500);
+    } else {
+      alert("获取下载链接失败，请稍后重试");
+    }
+  } catch (error) {
+    console.error("获取下载链接失败:", error);
+    alert("获取下载链接失败，请稍后重试");
   }
 };
 

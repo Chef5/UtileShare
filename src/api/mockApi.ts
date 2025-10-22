@@ -86,4 +86,30 @@ export const mockApi = {
       success: true,
     } as any;
   },
+
+  // 获取下载链接
+  getDownloadUrl: async (
+    code: string,
+    type: string
+  ): Promise<ApiResponse<{ url: string }>> => {
+    await mockDelay(300);
+
+    // 模拟返回下载链接
+    const mockUrls: Record<string, string> = {
+      baidu: "https://pan.baidu.com/s/example",
+      aliyun: "https://www.aliyundrive.com/s/example",
+      "123pan": "https://www.123pan.com/s/example",
+      direct: "https://example.com/download/file.zip",
+      other: "https://example.com/download",
+    };
+
+    return {
+      code: 200,
+      message: "获取下载链接成功",
+      data: {
+        url: mockUrls[type] || mockUrls.other,
+      },
+      success: true,
+    } as any;
+  },
 };

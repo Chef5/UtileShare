@@ -14,12 +14,20 @@ export interface Resource {
   downloads: number;
 }
 
+// 下载链接类型枚举
+export type DownloadLinkType =
+  | "direct"
+  | "baidu"
+  | "aliyun"
+  | "123pan"
+  | "other";
+
 // 下载链接类型
 export interface DownloadLink {
   id: string;
   name: string;
-  url: string;
-  type: "direct" | "external";
+  type: DownloadLinkType;
+  code?: string;
   size?: string;
 }
 

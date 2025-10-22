@@ -11,7 +11,8 @@
     "endpoints": {
       "resources": {
         "list": "/api/resources",
-        "detail": "/api/resources/:id"
+        "detail": "/api/resources/:id",
+        "download": "/api/resources/download"
       },
       "categories": {
         "list": "/api/categories"

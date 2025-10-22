@@ -1,4 +1,9 @@
-import type { Resource, Category, DownloadLink } from "@/types";
+import type {
+  Resource,
+  Category,
+  DownloadLink,
+  DownloadLinkType,
+} from "@/types";
 
 // 模拟分类数据
 export const mockCategories: Category[] = [
@@ -42,14 +47,32 @@ export const mockCategories: Category[] = [
 // 模拟下载链接数据
 const createDownloadLinks = (count: number = 2): DownloadLink[] => {
   const links: DownloadLink[] = [];
+  const types: DownloadLinkType[] = ["baidu", "aliyun", "123pan", "direct"];
+
   for (let i = 0; i < count; i++) {
-    links.push({
+    const type = types[i % types.length];
+    const needsCaptcha =
+      type === "baidu" || type === "aliyun" || type === "123pan";
+
+    const link: DownloadLink = {
       id: `link-${i + 1}`,
-      name: i === 0 ? "直接下载" : `备用链接 ${i}`,
-      url: `https://example.com/download/${i + 1}`,
-      type: "direct",
+      name:
+        i === 0
+          ? "百度网盘"
+          : i === 1
+          ? "阿里云盘"
+          : i === 2
+          ? "123网盘"
+          : "直接下载",
+      type: type,
       size: `${Math.floor(Math.random() * 50) + 10}MB`,
-    });
+    };
+
+    if (needsCaptcha) {
+      link.code = `abc${i + 1}23`;
+    }
+
+    links.push(link);
   }
   return links;
 };

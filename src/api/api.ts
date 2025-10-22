@@ -38,4 +38,17 @@ export const realApi = {
     const response = await apiClient.get(url);
     return response.data;
   },
+
+  // 获取下载链接
+  getDownloadUrl: async (
+    code: string,
+    type: string
+  ): Promise<ApiResponse<{ url: string }>> => {
+    const url = config.api.endpoints.resources.download;
+    const response = await apiClient.post(url, {
+      code,
+      type,
+    });
+    return response.data;
+  },
 };
