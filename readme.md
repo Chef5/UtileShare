@@ -17,7 +17,7 @@ UtileShare 的名称源自拉丁语 "Utile"，意为 "实用的、有用的" —
 - Axios (HTTP 客户端)
 - Web Crypto API (安全加密)
 
-## 项目配置 
+## 项目配置
 
 ### 环境变量配置
 
@@ -73,6 +73,12 @@ VITE_API_TIMEOUT=10000                   # API请求超时时间(毫秒)
       "headerKey": "X-Utile-Payload",    // 自定义请求头
       "headerValue": "encrypted"         // 请求头值
     }
+  },
+  
+  "seo": {
+    "blockCrawlers": true         // 是否启用搜索引擎爬虫限制
+                                  // true: 全站启用私密模式，完全禁止爬取
+                                  // false: 公开模式，允许爬取
   }
 }
 ```

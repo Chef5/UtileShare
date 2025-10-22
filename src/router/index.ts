@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import config from "@/config.json";
+import { setMetaRobots } from "@/utils/seo";
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -81,6 +82,9 @@ router.beforeEach((to, from, next) => {
       metaDescription.setAttribute("content", to.meta.description as string);
     }
   }
+
+  // 应用搜索引擎爬虫规则
+  setMetaRobots();
 
   next();
 });

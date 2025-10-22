@@ -35,5 +35,9 @@
       "headerKey": "X-Utile-Payload",
       "headerValue": "encrypted"
     }
+  },
+  "seo": {
+    "blockCrawlers": true,
+    "includeTestPage": true
   }
 }

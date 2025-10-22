@@ -147,6 +147,10 @@ import { RouterLink } from "vue-router";
 import { useResourceStore } from "@/stores";
 import type { Resource, DownloadLink } from "@/types";
 import DownloadModal from "@/components/common/DownloadModal.vue";
+import { useSEO } from "@/composables/useSEO";
+
+// 应用全局 SEO 设置
+useSEO();
 
 // Props
 interface Props {

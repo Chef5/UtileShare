@@ -68,6 +68,10 @@ import { onMounted, computed } from "vue";
 import { useResourceStore } from "@/stores";
 import ResourceFilter from "@/components/common/ResourceFilter.vue";
 import ResourceList from "@/components/common/ResourceList.vue";
+import { useSEO } from "@/composables/useSEO";
+
+// 应用全局 SEO 设置
+useSEO();
 
 const resourceStore = useResourceStore();
 

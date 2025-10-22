@@ -79,6 +79,10 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
 import { useRoute, RouterLink } from "vue-router";
+import { useSEO } from "@/composables/useSEO";
+
+// 应用全局 SEO 设置
+useSEO();
 import { useResourceStore } from "@/stores";
 import ResourceFilter from "@/components/common/ResourceFilter.vue";
 import ResourceList from "@/components/common/ResourceList.vue";
