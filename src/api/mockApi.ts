@@ -89,7 +89,7 @@ export const mockApi = {
 
   // 获取下载链接
   getDownloadUrl: async (
-    code: string,
+    _code: string,
     type: string
   ): Promise<ApiResponse<{ url: string }>> => {
     await mockDelay(300);

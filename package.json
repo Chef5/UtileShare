@@ -4,10 +4,9 @@
   "description": "UtileShare - 实用资源分享网站前端",
   "type": "module",
   "scripts": {
-    "dev": "npm run seo && vite",
+    "dev": "vite",
     "seo": "node scripts/seo.js",
     "build": "vue-tsc && npm run seo && vite build",
-    "build:dev": "npm run seo && vite build",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit"
   },

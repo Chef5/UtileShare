@@ -53,14 +53,14 @@ async function aes128CbcEncrypt(plainText: string): Promise<string> {
 
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
-    keyBytes,
+    keyBytes as BufferSource,
     { name: "AES-CBC", length: 128 },
     false,
     ["encrypt"]
   );
 
   const cipherBuffer = await crypto.subtle.encrypt(
-    { name: "AES-CBC", iv: ivBytes },
+    { name: "AES-CBC", iv: ivBytes as BufferSource },
     cryptoKey,
     textEncoder.encode(plainText)
   );
@@ -96,7 +96,7 @@ export async function decryptAes128CbcBase64ToJson<T = unknown>(
 
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
-    keyBytes,
+    keyBytes as BufferSource,
     { name: "AES-CBC", length: 128 },
     false,
     ["decrypt"]
@@ -104,9 +104,9 @@ export async function decryptAes128CbcBase64ToJson<T = unknown>(
 
   const cipherBytes = base64ToUint8Array(base64Payload);
   const plainBuffer = await crypto.subtle.decrypt(
-    { name: "AES-CBC", iv: ivBytes },
+    { name: "AES-CBC", iv: ivBytes as BufferSource },
     cryptoKey,
-    cipherBytes
+    cipherBytes as BufferSource
   );
   const text = textDecoder.decode(new Uint8Array(plainBuffer));
   return JSON.parse(text) as T;

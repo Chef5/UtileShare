@@ -119,8 +119,8 @@ export default function viteSeoPlugin() {
 
       const result = html.replace(seoRegex, seoBlock);
 
-      const mode = config.seo?.blockCrawlers ? "私密模式 🔒" : "公开模式 🌍";
-      console.log(`✅ 已注入 SEO 标签 (${mode})`);
+      // const mode = config.seo?.blockCrawlers ? "私密模式 🔒" : "公开模式 🌍";
+      // console.log(`✅ 已注入 SEO 标签 (${mode})`);
 
       return result;
     },

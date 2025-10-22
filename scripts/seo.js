@@ -39,8 +39,20 @@ try {
 const blockCrawlers = config.seo?.blockCrawlers ?? true;
 const mode = blockCrawlers ? "private" : "public";
 
-console.log("\n🔧 开始构建前配置...");
-console.log(`📋 模式: ${blockCrawlers ? "私密模式 🔒" : "公开模式 🌐"}`);
+// 输出构建配置信息
+console.log(`网站名称: ${config.app.title}`);
+console.log(`网站描述: ${config.app.description}`);
+
+console.log("\n📋 构建配置:");
+console.log(`   • 使用模拟数据: ${config.useMockData ? "✓" : "✗"}`);
+console.log(
+  `   • 主题切换: ${config.theme ? "✓" + " " + config.defaultTheme : "✗"}`
+);
+console.log(`   • 接口亲求加密: ${config.security?.enable ? "✓" : "✗"}`);
+console.log(`   • SEO 模式: ${blockCrawlers ? "私密 🔒" : "公开"}`);
+console.log(
+  `   • 测试页面: ${config.seo?.includeTestPage !== false ? " ✓" : "✗"}`
+);
 
 // 1. 复制 robots.txt
 const sourceRobots = join(assetsDir, `robots.${mode}.txt`);
@@ -49,14 +61,11 @@ const targetRobots = join(publicDir, "robots.txt");
 try {
   if (existsSync(sourceRobots)) {
     copyFileSync(sourceRobots, targetRobots);
-    console.log(
-      `✅ 已生成 robots.txt (${blockCrawlers ? "私密版本" : "公开版本"})`
-    );
   } else {
-    console.warn(`⚠️  源文件不存在: ${sourceRobots}`);
+    console.warn(`   ⚠️  源文件不存在: ${sourceRobots}`);
   }
 } catch (error) {
-  console.error("❌ 复制 robots.txt 失败:", error.message);
+  console.error(`   ❌ 复制 robots.txt 失败: ${error.message}`);
 }
 
 // 2. 复制 security.txt
@@ -66,14 +75,11 @@ const targetSecurity = join(publicDir, "security.txt");
 try {
   if (existsSync(sourceSecurity)) {
     copyFileSync(sourceSecurity, targetSecurity);
-    console.log(
-      `✅ 已生成 security.txt (${blockCrawlers ? "私密版本" : "公开版本"})`
-    );
   } else {
-    console.warn(`⚠️  源文件不存在: ${sourceSecurity}`);
+    console.warn(`   ⚠️  源文件不存在: ${sourceSecurity}`);
   }
 } catch (error) {
-  console.error("❌ 复制 security.txt 失败:", error.message);
+  console.error(`   ❌ 复制 security.txt 失败: ${error.message}`);
 }
 
 // 3. 根据配置决定是否包含测试文件
@@ -84,30 +90,10 @@ if (config.seo?.includeTestPage === false) {
   if (existsSync(testFile)) {
     try {
       unlinkSync(testFile);
-      console.log("🗑️  已移除测试页面 (test-robots.html)");
     } catch (error) {
-      console.warn("⚠️  无法删除测试页面:", error.message);
+      console.warn(`\n⚠️  无法删除测试页面: ${error.message}`);
     }
-  }
-} else {
-  // 默认保留测试页面
-  if (existsSync(testFile)) {
-    console.log("✅ 保留测试页面 (test-robots.html)");
   }
 }
 
-// 注：SEO meta 标签的注入现在由 Vite 插件处理
-// 在构建时动态注入到 dist/index.html，不修改源文件
-console.log("ℹ️  SEO meta 标签将在构建时由 Vite 插件注入");
-
-// 4. 输出配置摘要
-console.log("\n📊 配置摘要:");
-console.log(`   - 爬虫限制: ${blockCrawlers ? "启用 ✓" : "禁用 ✗"}`);
-console.log(`   - robots.txt: ${mode}版本`);
-console.log(`   - security.txt: ${mode}版本`);
-console.log(
-  `   - 测试页面: ${config.seo?.includeTestPage === false ? "不包含" : "包含"}`
-);
-console.log(`   - SEO meta 注入: 由 Vite 插件处理`);
-
-console.log("\n✨ 构建前配置完成!\n");
+console.log("");
