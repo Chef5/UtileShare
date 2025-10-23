@@ -26,19 +26,6 @@
         />
       </div>
 
-      <!-- 加载更多按钮 -->
-      <div
-        v-if="hasMore && !loading"
-        class="text-center"
-      >
-        <button
-          @click="loadMoreResources"
-          class="btn-primary"
-        >
-          加载更多
-        </button>
-      </div>
-
       <!-- 空状态 -->
       <div
         v-if="!loading && resources.length === 0"
