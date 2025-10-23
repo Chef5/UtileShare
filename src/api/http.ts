@@ -47,11 +47,11 @@ export const createApiClient = (): AxiosInstance => {
         const method = (config.method || "get").toLowerCase();
         if (method === "get") {
           const rawParams = (config.params as any) || {};
-          const encrypted = await buildEncryptedPayload(rawParams);
+          const encrypted = buildEncryptedPayload(rawParams);
           config.params = { [payloadField]: encrypted.payload } as any;
         } else {
           const rawData = (config.data as any) || {};
-          const encrypted = await buildEncryptedPayload(rawData);
+          const encrypted = buildEncryptedPayload(rawData);
           config.data = { [payloadField]: encrypted.payload } as any;
         }
       }

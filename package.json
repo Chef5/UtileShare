@@ -14,11 +14,13 @@
     "@vueuse/core": "^10.5.0",
     "@vueuse/head": "^2.0.0",
     "axios": "^1.6.2",
+    "crypto-js": "^4.2.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.10.0",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vue/tsconfig": "^0.5.1",
