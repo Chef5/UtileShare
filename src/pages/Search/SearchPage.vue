@@ -4,7 +4,10 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- 筛选组件 -->
       <div class="mb-8">
-        <ResourceFilter @filter-change="handleFilterChange" />
+        <ResourceFilter
+          :search-keyword="searchKeyword"
+          @filter-change="handleFilterChange"
+        />
       </div>
 
       <!-- 结果统计 -->
@@ -64,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from "vue";
+import { computed, watch } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { useSEO } from "@/composables/useSEO";
 
@@ -143,11 +146,4 @@ watch(
   },
   { immediate: true }
 );
-
-// 生命周期
-onMounted(async () => {
-  if (searchKeyword.value) {
-    await loadResources();
-  }
-});
 </script>

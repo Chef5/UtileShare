@@ -27,7 +27,7 @@
 
       <!-- 搜索框 -->
       <div :class="props.showCategoryFilter ? 'flex-1' : 'w-full'">
-        <SearchBox />
+        <SearchBox :initial-value="props.searchKeyword" />
       </div>
     </div>
 
@@ -35,7 +35,7 @@
     <div class="sm:hidden space-y-3">
       <!-- 搜索框 -->
       <div>
-        <SearchBox />
+        <SearchBox :initial-value="props.searchKeyword" />
       </div>
 
       <!-- 分类筛选 -->
@@ -67,9 +67,11 @@ import SearchBox from "./SearchBox.vue";
 // 定义 Props
 interface Props {
   showCategoryFilter?: boolean;
+  searchKeyword?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   showCategoryFilter: true,
+  searchKeyword: "",
 });
 
 // 定义事件
