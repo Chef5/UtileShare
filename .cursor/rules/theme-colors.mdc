@@ -1,0 +1,429 @@
+# 主题色配置规范
+
+## 概述
+
+本项目使用 Tailwind CSS 实现亮色和暗色两种主题模式，通过 `dark:` 前缀类名实现主题切换。所有组件必须同时支持亮色和暗色主题。
+
+## 主题切换机制
+
+- 使用 `darkMode: "class"` 配置（Tailwind）
+- 通过 `useThemeStore` 管理主题状态
+- 在 `<html>` 元素上添加/移除 `dark` 类来切换主题
+- 主题偏好保存在 `localStorage` 中
+
+## 颜色配置规范
+
+### 1. 页面背景色
+
+**页面主背景**
+- 亮色：`bg-gray-50` 或使用 CSS 变量 `var(--color-gray-50)` (#f9fafb)
+- 暗色：自动切换为 `#111827`（通过 CSS 变量）
+
+**使用示例：**
+```vue
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <!-- 内容 -->
+</div>
+```
+
+### 2. 卡片背景色
+
+**卡片主体**
+- 亮色：`bg-white`
+- 暗色：`dark:bg-gray-800`
+
+**卡片头部/底部**
+- 亮色：`bg-gray-50`
+- 暗色：`dark:bg-gray-700`
+
+**使用示例：**
+```vue
+<!-- 使用 card 类（已在 main.css 中定义） -->
+<div class="card">
+  <div class="card-header">标题</div>
+  <div class="card-body">内容</div>
+</div>
+
+<!-- 或手动指定 -->
+<div class="bg-white dark:bg-gray-800 rounded-lg">
+  <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3">头部</div>
+</div>
+```
+
+### 3. 文字颜色
+
+**主标题（H1-H3）**
+- 亮色：`text-gray-900`
+- 暗色：`dark:text-white`
+
+**副标题/小标题（H4-H6）**
+- 亮色：`text-gray-900`
+- 暗色：`dark:text-white`
+
+**正文内容**
+- 亮色：`text-gray-700` 或 `text-gray-600`
+- 暗色：`dark:text-gray-300` 或 `dark:text-gray-400`
+
+**次要文字/辅助信息**
+- 亮色：`text-gray-500`
+- 暗色：`dark:text-gray-400`
+
+**禁用/占位文字**
+- 亮色：`text-gray-400`
+- 暗色：`dark:text-gray-500`
+
+**使用示例：**
+```vue
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">主标题</h1>
+<p class="text-gray-700 dark:text-gray-300">正文内容</p>
+<span class="text-gray-500 dark:text-gray-400">次要信息</span>
+```
+
+### 4. 边框颜色
+
+**主要边框**
+- 亮色：`border-gray-200`
+- 暗色：`dark:border-gray-700`
+
+**次要边框**
+- 亮色：`border-gray-300`
+- 暗色：`dark:border-gray-600`
+
+**输入框边框**
+- 亮色：`border-gray-300`
+- 暗色：`dark:border-gray-600`
+
+**使用示例：**
+```vue
+<div class="border border-gray-200 dark:border-gray-700 rounded-lg">
+  <!-- 内容 -->
+</div>
+```
+
+### 5. 标签和徽章
+
+**标签背景**
+- 亮色：`bg-gray-100`
+- 暗色：`dark:bg-gray-700`
+
+**标签文字**
+- 亮色：`text-gray-800`
+- 暗色：`dark:text-gray-300`
+
+**使用示例：**
+```vue
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+  标签文本
+</span>
+```
+
+### 6. 链接颜色
+
+**普通链接**
+- 亮色：`text-primary-600`
+- 暗色：`dark:text-primary-400`
+
+**链接悬停**
+- 亮色：`hover:text-primary-700`
+- 暗色：`dark:hover:text-primary-300`
+
+**使用示例：**
+```vue
+<a href="#" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+  链接文本
+</a>
+```
+
+### 7. 按钮颜色
+
+**主按钮（Primary）**
+- 背景：`bg-primary-600`（亮暗通用）
+- 悬停：`hover:bg-primary-500`
+- 文字：`text-white`（亮暗通用）
+
+**次要按钮（Secondary）**
+- 背景：`bg-gray-200 dark:bg-gray-600`
+- 文字：`text-gray-900 dark:text-white`
+- 悬停：`hover:bg-gray-300 dark:hover:bg-gray-500`
+
+**轮廓按钮（Outline）**
+- 背景：`bg-white dark:bg-gray-600`
+- 边框：`border-gray-300 dark:border-gray-600`
+- 文字：`text-gray-700 dark:text-white`
+- 悬停：`hover:bg-gray-50 dark:hover:bg-gray-500`
+
+**使用示例：**
+```vue
+<!-- 使用预定义的按钮类 -->
+<button class="btn-primary">主要按钮</button>
+<button class="btn-secondary">次要按钮</button>
+<button class="btn-outline">轮廓按钮</button>
+```
+
+### 8. 输入框颜色
+
+**输入框背景**
+- 亮色：`bg-white`
+- 暗色：`dark:bg-gray-700`
+
+**输入框文字**
+- 亮色：`text-gray-900`
+- 暗色：`dark:text-gray-100`
+
+**占位符**
+- 亮色：`placeholder-gray-400`
+- 暗色：`dark:placeholder-gray-500`
+
+**使用示例：**
+```vue
+<!-- 使用预定义的 input 类 -->
+<input type="text" class="input" placeholder="请输入..." />
+
+<!-- 或手动指定 -->
+<input class="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600" />
+```
+
+### 9. 提示信息框
+
+**信息提示（Info）**
+- 背景：`bg-blue-50 dark:bg-blue-900/30`
+- 边框：`border-blue-200 dark:border-blue-800`
+- 文字：`text-blue-700 dark:text-blue-300`
+
+**警告提示（Warning）**
+- 背景：`bg-yellow-50 dark:bg-yellow-900/30`
+- 边框：`border-yellow-200 dark:border-yellow-800`
+- 文字：`text-yellow-700 dark:text-yellow-300`
+
+**错误提示（Error）**
+- 背景：`bg-red-50 dark:bg-red-900/30`
+- 边框：`border-red-200 dark:border-red-800`
+- 文字：`text-red-700 dark:text-red-300`
+
+**成功提示（Success）**
+- 背景：`bg-green-50 dark:bg-green-900/30`
+- 边框：`border-green-200 dark:border-green-800`
+- 文字：`text-green-700 dark:text-green-300`
+
+**使用示例：**
+```vue
+<div class="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+  <p class="text-sm text-blue-700 dark:text-blue-300">提示信息</p>
+</div>
+```
+
+### 10. 加载状态
+
+**骨架屏背景**
+- 亮色：`bg-gray-200`
+- 暗色：`dark:bg-gray-700`
+
+**加载图标**
+- 亮色：`text-gray-400`
+- 暗色：`dark:text-gray-500`
+
+**使用示例：**
+```vue
+<div class="animate-pulse">
+  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+</div>
+```
+
+### 11. 图标颜色
+
+**主要图标**
+- 亮色：`text-gray-400`
+- 暗色：`dark:text-gray-500`
+
+**次要图标**
+- 亮色：`text-gray-500`
+- 暗色：`dark:text-gray-400`
+
+**图标悬停**
+- 亮色：`hover:text-gray-500`
+- 暗色：`dark:hover:text-gray-400`
+
+**使用示例：**
+```vue
+<svg class="w-6 h-6 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+  <!-- SVG 路径 -->
+</svg>
+```
+
+### 12. 分隔线
+
+**分隔线颜色**
+- 亮色：`bg-gray-300`
+- 暗色：`dark:bg-gray-600`
+
+**使用示例：**
+```vue
+<span class="w-px h-4 bg-gray-300 dark:bg-gray-600"></span>
+```
+
+### 13. 代码块
+
+**代码背景**
+- 亮色：`bg-gray-100`
+- 暗色：`dark:bg-gray-700`
+
+**代码文字**
+- 亮色：`text-gray-900`（继承）
+- 暗色：`dark:text-white`（继承）
+
+**使用示例：**
+```vue
+<code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono">
+  代码内容
+</code>
+
+<pre class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+  代码块内容
+</pre>
+```
+
+### 14. 引用块
+
+**引用边框**
+- 亮色：`border-gray-300`
+- 暗色：`dark:border-gray-600`
+
+**引用文字**
+- 亮色：`text-gray-600`
+- 暗色：`dark:text-gray-400`
+
+**使用示例：**
+```vue
+<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400">
+  引用内容
+</blockquote>
+```
+
+### 15. 弹窗/模态框
+
+**弹窗背景**
+- 亮色：`bg-white`
+- 暗色：`dark:bg-gray-800`
+
+**遮罩层**
+- 亮色：`bg-gray-500 bg-opacity-75`
+- 暗色：自动适配（通常保持相同透明度）
+
+**使用示例：**
+```vue
+<!-- 遮罩层 -->
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75"></div>
+
+<!-- 弹窗内容 -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+  <!-- 内容 -->
+</div>
+```
+
+## 开发规范
+
+### 必须遵循的规则
+
+1. **所有颜色必须同时支持亮色和暗色主题**
+   - ✅ 正确：`text-gray-900 dark:text-white`
+   - ❌ 错误：`text-gray-900`（缺少暗色主题）
+
+2. **使用语义化的颜色类名**
+   - ✅ 正确：`text-gray-900 dark:text-white`（标题）
+   - ❌ 错误：`text-black dark:text-white`（不够语义化）
+
+3. **保持颜色层级一致性**
+   - 主标题统一使用 `text-gray-900 dark:text-white`
+   - 正文统一使用 `text-gray-700 dark:text-gray-300`
+   - 次要文字统一使用 `text-gray-500 dark:text-gray-400`
+
+4. **优先使用预定义的组件类**
+   - 使用 `.card`、`.card-header`、`.card-body` 等预定义类
+   - 使用 `.btn-primary`、`.btn-secondary` 等按钮类
+   - 使用 `.input` 输入框类
+
+5. **确保对比度符合可访问性标准**
+   - 文字与背景的对比度至少为 4.5:1（正文）
+   - 大文字（18pt+）对比度至少为 3:1
+
+### 常见模式示例
+
+**卡片组件**
+```vue
+<div class="card">
+  <div class="card-header">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">标题</h2>
+  </div>
+  <div class="card-body">
+    <p class="text-gray-700 dark:text-gray-300">内容</p>
+  </div>
+</div>
+```
+
+**列表项**
+```vue
+<div class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+  <p class="text-sm font-medium text-gray-900 dark:text-white">项目名称</p>
+  <span class="text-xs text-gray-500 dark:text-gray-400">次要信息</span>
+</div>
+```
+
+**空状态**
+```vue
+<div class="text-center py-12">
+  <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+    <svg class="w-12 h-12 text-gray-400 dark:text-gray-500">
+      <!-- 图标 -->
+    </svg>
+  </div>
+  <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">标题</h3>
+  <p class="text-gray-600 dark:text-gray-400">描述文字</p>
+</div>
+```
+
+## 颜色变量映射
+
+### CSS 变量（main.css）
+
+**亮色主题**
+- `--color-gray-50`: #f9fafb
+- `--color-gray-100`: #f3f4f6
+- `--color-gray-200`: #e5e7eb
+- `--color-gray-300`: #d1d5db
+- `--color-gray-400`: #9ca3af
+- `--color-gray-500`: #6b7280
+- `--color-gray-600`: #4b5563
+- `--color-gray-700`: #374151
+- `--color-gray-800`: #1f2937
+- `--color-gray-900`: #111827
+
+**暗色主题**
+- `--color-gray-50`: #111827（反转）
+- `--color-gray-100`: #1f2937（反转）
+- `--color-gray-200`: #374151（反转）
+- `--color-gray-300`: #4b5563（反转）
+- `--color-gray-400`: #6b7280（保持不变）
+- `--color-gray-500`: #9ca3af（反转）
+- `--color-gray-600`: #d1d5db（反转）
+- `--color-gray-700`: #e5e7eb（反转）
+- `--color-gray-800`: #f3f4f6（反转）
+- `--color-gray-900`: #f9fafb（反转）
+
+## 测试检查清单
+
+在开发新组件或修改现有组件时，请确保：
+
+- [ ] 所有背景色都有暗色主题对应
+- [ ] 所有文字颜色都有暗色主题对应
+- [ ] 所有边框颜色都有暗色主题对应
+- [ ] 所有交互状态（hover、focus）都有暗色主题对应
+- [ ] 颜色对比度符合可访问性标准
+- [ ] 在亮色和暗色模式下都测试过视觉效果
+- [ ] 使用了预定义的组件类（如果适用）
+
+## 参考资源
+
+- [Tailwind CSS Dark Mode](https://tailwindcss.com/docs/dark-mode)
+- [WCAG 对比度标准](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
+- 项目中的 `src/assets/css/main.css` 文件
+- 项目中的 `tailwind.config.js` 文件

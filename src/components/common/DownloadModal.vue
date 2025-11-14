@@ -28,13 +28,15 @@
           >
             <div
               v-if="show"
-              class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+              class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
             >
-              <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div
+                class="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4"
+              >
                 <!-- 关闭按钮 -->
                 <button
                   @click="handleClose"
-                  class="absolute right-4 top-4 text-gray-400 hover:text-gray-500"
+                  class="absolute right-4 top-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
                 >
                   <svg
                     class="h-6 w-6"
@@ -54,7 +56,7 @@
                 <div class="sm:flex sm:items-start">
                   <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                     <h3
-                      class="text-lg font-semibold leading-6 text-gray-900 mb-4"
+                      class="text-lg font-semibold leading-6 text-gray-900 dark:text-white mb-4"
                     >
                       {{ downloadLink?.name }}
                     </h3>
@@ -65,10 +67,13 @@
                         v-if="downloadLink?.size"
                         class="flex items-center text-sm"
                       >
-                        <span class="text-gray-500 shrink-0">文件大小：</span>
-                        <span class="text-gray-900 font-medium">{{
-                          downloadLink.size
-                        }}</span>
+                        <span class="text-gray-500 dark:text-gray-400 shrink-0"
+                          >文件大小：</span
+                        >
+                        <span
+                          class="text-gray-900 dark:text-white font-medium"
+                          >{{ downloadLink.size }}</span
+                        >
                       </div>
 
                       <!-- 提取码 -->
@@ -76,18 +81,20 @@
                         v-if="showCaptcha && downloadLink?.code"
                         class="flex items-center text-sm"
                       >
-                        <span class="text-gray-500 shrink-0">提取码：</span>
+                        <span class="text-gray-500 dark:text-gray-400 shrink-0"
+                          >提取码：</span
+                        >
                         <span
-                          class="text-gray-900 font-medium font-mono bg-gray-100 px-2 py-1 rounded"
+                          class="text-gray-900 dark:text-white font-medium font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"
                           >{{ downloadLink.code }}</span
                         >
                       </div>
 
                       <!-- 提示信息 -->
                       <div
-                        class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+                        class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg"
                       >
-                        <p class="text-sm text-blue-700">
+                        <p class="text-sm text-blue-700 dark:text-blue-300">
                           如遇链接失效，请联系反馈。
                         </p>
                       </div>
@@ -98,7 +105,7 @@
 
               <!-- 底部按钮 -->
               <div
-                class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-3"
+                class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-3"
               >
                 <button
                   @click="handleDownload"
@@ -131,7 +138,7 @@
                 <button
                   @click="handleClose"
                   type="button"
-                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-600 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 sm:mt-0 sm:w-auto"
                 >
                   取消
                 </button>

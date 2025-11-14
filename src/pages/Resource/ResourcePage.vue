@@ -6,12 +6,12 @@
       class="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
       <div class="animate-pulse">
-        <div class="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-        <div class="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+        <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-8"></div>
         <div class="space-y-4">
-          <div class="h-4 bg-gray-200 rounded"></div>
-          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
           <div class="lg:col-span-2">
             <div class="card">
               <div class="card-header">
-                <h2 class="text-lg font-semibold text-gray-900">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                   {{ resource.name }}
                 </h2>
               </div>
@@ -45,12 +45,16 @@
               v-if="resource.tags && resource.tags.length > 0"
               class="mt-6"
             >
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">标签</h3>
+              <h3
+                class="text-sm font-semibold text-gray-900 dark:text-white mb-3"
+              >
+                标签
+              </h3>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="tag in resource.tags"
                   :key="tag"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
                 >
                   {{ tag }}
                 </span>
@@ -62,22 +66,26 @@
           <div class="lg:col-span-1">
             <div class="card sticky top-8">
               <div class="card-header">
-                <h2 class="text-lg font-semibold text-gray-900">下载链接</h2>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  下载链接
+                </h2>
               </div>
               <div class="card-body">
                 <div class="space-y-3">
                   <div
                     v-for="link in resource.downloadLinks"
                     :key="link.id"
-                    class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-primary-300 transition-colors"
+                    class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-300 dark:hover:border-primary-500 transition-colors"
                   >
                     <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-gray-900 truncate">
+                      <p
+                        class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                      >
                         {{ link.name }}
                       </p>
                       <p
                         v-if="link.size"
-                        class="text-xs text-gray-500"
+                        class="text-xs text-gray-500 dark:text-gray-400"
                       >
                         {{ link.size }}
                       </p>
@@ -104,10 +112,10 @@
     >
       <div class="text-center py-12">
         <div
-          class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4"
+          class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4"
         >
           <svg
-            class="w-12 h-12 text-gray-400"
+            class="w-12 h-12 text-gray-400 dark:text-gray-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -120,8 +128,12 @@
             />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">资源不存在</h3>
-        <p class="text-gray-600 mb-4">您访问的资源可能已被删除或不存在。</p>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          资源不存在
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          您访问的资源可能已被删除或不存在。
+        </p>
         <RouterLink
           to="/"
           class="btn-primary"
@@ -227,7 +239,7 @@ onMounted(async () => {
 
 <style scoped>
 .prose {
-  @apply text-gray-700 leading-relaxed;
+  @apply text-gray-700 dark:text-gray-300 leading-relaxed;
 }
 
 .prose h1,
@@ -236,7 +248,7 @@ onMounted(async () => {
 .prose h4,
 .prose h5,
 .prose h6 {
-  @apply font-semibold text-gray-900 mt-6 mb-3;
+  @apply font-semibold text-gray-900 dark:text-white mt-6 mb-3;
 }
 
 .prose h1 {
@@ -263,18 +275,18 @@ onMounted(async () => {
 }
 
 .prose a {
-  @apply text-primary-600 hover:text-primary-700 underline;
+  @apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline;
 }
 
 .prose code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm font-mono;
+  @apply bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-sm font-mono;
 }
 
 .prose pre {
-  @apply bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+  @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto mb-4;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4;
+  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400 mb-4;
 }
 </style>
